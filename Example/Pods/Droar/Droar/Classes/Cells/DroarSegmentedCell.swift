@@ -13,6 +13,33 @@ public class DroarSegmentedCell : UITableViewCell, DroarCell {
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     var onValueChanged: ((Int) -> Void)?
     
+    public var title: String? {
+        get { return titleLabel.text }
+        set { titleLabel.text = newValue }
+    }
+    
+    public var selectedIndex: Int? {
+        get {
+            #if swift(>=4.2)
+            return segmentedControl.selectedSegmentIndex == UISegmentedControl.noSegment ? nil : segmentedControl.selectedSegmentIndex
+            #else
+            return segmentedControl.selectedSegmentIndex == UISegmentedControlNoSegment ? nil : segmentedControl.selectedSegmentIndex
+            #endif
+        }
+        set {
+            #if swift(>=4.2)
+            segmentedControl.selectedSegmentIndex = (newValue == nil) ? UISegmentedControl.noSegment : newValue!
+            #else
+            segmentedControl.selectedSegmentIndex = (newValue == nil) ? UISegmentedControlNoSegment : newValue!
+            #endif
+        }
+    }
+    
+    public var allowSelection: Bool {
+        get { return selectionStyle != .none }
+        set { selectionStyle = newValue ? .gray : .none }
+    }
+    
     public static func create(title: String? = "", values:[String] = [], defaultIndex:Int? = nil, allowSelection: Bool = false, onValueChanged: ((Int) -> Void)? = nil) -> DroarSegmentedCell {
         var cell: DroarSegmentedCell?
         
@@ -23,19 +50,17 @@ public class DroarSegmentedCell : UITableViewCell, DroarCell {
             }
         }
         
-        cell?.titleLabel.text = title
+        cell?.title = title
         cell?.segmentedControl.removeAllSegments()
         for value in values {
             cell?.segmentedControl.insertSegment(withTitle: value, at: values.index(of: value)!, animated: false)
         }
-        if let defaultIndex = defaultIndex {
-            cell?.segmentedControl.selectedSegmentIndex = defaultIndex
-        }
-        cell?.selectionStyle = allowSelection ? .gray : .none
+        cell?.selectedIndex = defaultIndex
+        cell?.allowSelection = allowSelection
         cell?.onValueChanged = onValueChanged
         
         let font = UIFont(name: "Russo One", size: 12) ?? UIFont.systemFont(ofSize: 12)
-        cell?.segmentedControl.setTitleTextAttributes([NSAttributedStringKey.font : font], for: .normal)
+        cell?.segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : font], for: .normal)
         
         return cell ?? DroarSegmentedCell()
     }

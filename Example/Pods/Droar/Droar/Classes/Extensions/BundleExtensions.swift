@@ -10,12 +10,8 @@ import Foundation
 internal extension Bundle {
     static var podBundle: Bundle {
         get {
-            var bundlePath = Bundle.main.path(forResource: "Droar", ofType: "bundle", inDirectory: "Frameworks/Droar.framework")
-            
-            if bundlePath == nil {
-                bundlePath = Bundle.main.path(forResource: "Droar", ofType: "bundle")
-            }
-            
+            let frameworkBundle = Bundle(for: Droar.self)
+            let bundlePath = frameworkBundle.path(forResource: "Droar", ofType: "bundle")
             return Bundle(path: bundlePath!)!
         }
     }
