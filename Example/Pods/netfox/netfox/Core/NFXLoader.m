@@ -11,11 +11,14 @@
 
 + (void)load
 {
-    SEL implementNetfoxSelector = NSSelectorFromString(@"implementNetfox");
-    if ([NSURLSessionConfiguration respondsToSelector:implementNetfoxSelector])
-    {
-        [NSURLSessionConfiguration performSelector:implementNetfoxSelector];
-    }
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        SEL implementNetfoxSelector = NSSelectorFromString(@"implementNetfox");
+        if ([NSURLSessionConfiguration respondsToSelector:implementNetfoxSelector])
+        {
+            [NSURLSessionConfiguration performSelector:implementNetfoxSelector];
+        }
+    });
 }
 
 @end
